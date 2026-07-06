@@ -41,7 +41,9 @@ Route::prefix('admin')->group(function () {
         // Gallery
         Route::get('/gallery', [GalleryController::class, 'index']);
         Route::post('/gallery', [GalleryController::class, 'store']);
+        Route::put('/gallery/{id}', [GalleryController::class, 'update']);
         Route::delete('/gallery/{id}', [GalleryController::class, 'destroy']);
+        Route::post('/upload', [GalleryController::class, 'upload']);
 
         // Programs
         Route::get('/programs', [ProgramController::class, 'index']);

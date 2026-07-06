@@ -5,10 +5,26 @@
   --font-sans: 'Inter', sans-serif;
   --font-serif: 'Playfair Display', serif;
   
-  /* Gunakan referensi langsung ke palet warna Tailwind */
-  --color-primary: theme(--color-emerald-700);
-  --color-primary-hover: theme(--color-emerald-800);
-  --color-primary-light: theme(--color-emerald-50);
+  /* Brand Color Palette */
+  --color-brand-green-dark: #064e3b;   /* Emerald 900 */
+  --color-brand-green-main: #065f46;   /* Emerald 800 */
+  --color-brand-green-light: #ecfdf5;  /* Emerald 50 */
+  
+  --color-brand-gold-dark: #85581A;
+  --color-brand-gold-main: #B38F4D;
+  --color-brand-gold-light: #FAF6EE;
+  
+  --color-text-title: #0F172A;         /* Slate 900 */
+  --color-text-body: #475569;          /* Slate 600 */
+  
+  /* Alias warna primary untuk kompatibilitas ke belakang */
+  --color-primary: var(--color-brand-green-main);
+  --color-primary-hover: var(--color-brand-green-dark);
+  --color-primary-light: var(--color-brand-green-light);
+  
+  /* Key Shadow & Glow Effect */
+  --shadow-premium: 0 10px 30px -10px rgba(6, 95, 70, 0.08);
+  --shadow-gold-glow: 0 4px 20px rgba(179, 143, 77, 0.15);
 }
 
 html, body, #root {
@@ -41,4 +57,12 @@ h1, h2, h3, h4, h5, h6 {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+.animate-marquee {
+  animation: marquee 20s linear infinite;
 }
