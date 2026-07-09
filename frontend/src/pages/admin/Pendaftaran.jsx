@@ -16,7 +16,7 @@ import PageHeader from '../../components/admin/PageHeader';
 import LoadingState from '../../components/admin/LoadingState';
 import EmptyState from '../../components/admin/EmptyState';
 
-export default function Ppdb() {
+export default function Pendaftaran() {
     const [pendaftar, setPendaftar] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -37,8 +37,8 @@ export default function Ppdb() {
             const res = await api.get('/admin/ppdb');
             setPendaftar(Array.isArray(res.data) ? res.data : (res.data?.data || []));
         } catch (err) {
-            console.error('Error fetching PPDB candidates:', err);
-            setError('Gagal memuat daftar pendaftar PPDB.');
+            console.error('Error fetching registration candidates:', err);
+            setError('Gagal memuat daftar pendaftar.');
         } finally {
             setLoading(false);
         }
@@ -117,7 +117,7 @@ export default function Ppdb() {
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
-        link.setAttribute("download", `ppdb-registrations-${new Date().toISOString().slice(0, 10)}.csv`);
+        link.setAttribute("download", `pendaftaran-santri-baru-${new Date().toISOString().slice(0, 10)}.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -143,7 +143,7 @@ export default function Ppdb() {
 
     return (
         <>
-            <PageHeader title="Pendaftar PPDB">
+            <PageHeader title="Pendaftar Santri Baru">
                 <button
                     onClick={exportToCsv}
                     disabled={loading || filteredPendaftar.length === 0}

@@ -17,19 +17,28 @@ class ProgramController extends Controller
     // Admin
     public function store(Request $request)
     {
-        $request->validate([
-            'title'       => 'required|string',
-            'description' => 'required|string',
+        $validated = $request->validate([
+            'title'        => 'required|string|max:255',
+            'description'  => 'required|string',
+            'icon_or_image'=> 'nullable|string|max:2048',
+            'order'        => 'nullable|integer|min:0',
         ]);
 
-        $program = Program::create($request->all());
+        $program = Program::create($validated);
         return response()->json($program, 201);
     }
 
     public function update(Request $request, $id)
     {
+        $validated = $request->validate([
+            'title'        => 'sometimes|required|string|max:255',
+            'description'  => 'sometimes|required|string',
+            'icon_or_image'=> 'nullable|string|max:2048',
+            'order'        => 'nullable|integer|min:0',
+        ]);
+
         $program = Program::findOrFail($id);
-        $program->update($request->all());
+        $program->update($validated);
         return response()->json($program);
     }
 

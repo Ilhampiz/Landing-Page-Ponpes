@@ -1,24 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import api from '../api/axios';
+import React from 'react';
+import { useSettings } from '../context/SettingsContext';
 import { runningTextItems } from "../constants/runningText";
 
 function RunningText() {
-    const [text, setText] = useState('');
+    const { settings, loading } = useSettings();
 
-    useEffect(() => {
-        const fetchRunningText = async () => {
-            try {
-                const res = await api.get('/settings');
-                if (res.data && res.data.running_text) {
-                    setText(res.data.running_text);
-                }
-            } catch (err) {
-                console.error('Error fetching running text:', err);
-            }
-        };
-        fetchRunningText();
-    }, []);
+    if (loading) {
+        return <div className="h-[38px] bg-brand-green-dark border-b border-brand-gold-main/20" />;
+    }
 
+    const text = settings?.running_text || '';
     const items = text ? [text, text, text] : runningTextItems;
 
     return (

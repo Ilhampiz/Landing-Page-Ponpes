@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { SettingsProvider } from './context/SettingsContext';
 
 // Public pages
 import Home from "./pages/public/Home";
@@ -7,7 +8,7 @@ import Profil from "./pages/public/Profil";
 import Program from "./pages/public/Program";
 import Galeri from "./pages/public/Galeri";
 import Berita from "./pages/public/Berita";
-import Ppdb from "./pages/public/Ppdb";
+import FormulirPendaftaran from "./pages/public/FormulirPendaftaran";
 import Kontak from "./pages/public/Kontak";
 import PublicLayout from "./components/PublicLayout";
 
@@ -17,7 +18,7 @@ import AdminDashboard from './pages/admin/Dashboard';
 import AdminNews from './pages/admin/News';
 import AdminGallery from './pages/admin/Gallery';
 import AdminPrograms from './pages/admin/Programs';
-import AdminPpdb from './pages/admin/Ppdb';
+import AdminPendaftaran from './pages/admin/Pendaftaran';
 import AdminSettings from './pages/admin/Settings';
 
 import AdminLayout from './layouts/AdminLayout';
@@ -47,7 +48,7 @@ function AppRoutes() {
                 <Route path="/admin/news" element={<AdminNews />} />
                 <Route path="/admin/gallery" element={<AdminGallery />} />
                 <Route path="/admin/programs" element={<AdminPrograms />} />
-                <Route path="/admin/ppdb" element={<AdminPpdb />} />
+                <Route path="/admin/pendaftaran" element={<AdminPendaftaran />} />
                 <Route path="/admin/settings" element={<AdminSettings />} />
             </Route>
 
@@ -59,7 +60,7 @@ function AppRoutes() {
             <Route path="/program" element={<PublicLayout><Program /></PublicLayout>} />
             <Route path="/galeri" element={<PublicLayout><Galeri /></PublicLayout>} />
             <Route path="/berita" element={<PublicLayout><Berita /></PublicLayout>} />
-            <Route path="/ppdb" element={<PublicLayout><Ppdb /></PublicLayout>} />
+            <Route path="/formulir-pendaftaran" element={<PublicLayout><FormulirPendaftaran /></PublicLayout>} />
             <Route path="/kontak" element={<PublicLayout><Kontak /></PublicLayout>} />
 
             {/* Fallback route */}
@@ -72,7 +73,9 @@ export default function App() {
     return (
         <BrowserRouter>
             <AuthProvider>
-                <AppRoutes />
+                <SettingsProvider>
+                    <AppRoutes />
+                </SettingsProvider>
             </AuthProvider>
         </BrowserRouter>
     );

@@ -1,23 +1,38 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { BookOpen, Mail, Lock, AlertCircle, Loader2 } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
+import { BookOpen, Mail, Lock, AlertCircle, ShieldAlert, Loader2 } from 'lucide-react';
 
 export default function Login() {
     const { login } = useAuth();
+    const location = useLocation();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [sessionExpired, setSessionExpired] = useState(false);
     const [loading, setLoading] = useState(false);
+
+    // Deteksi redirect dari auto-logout (token expired)
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        if (params.get('session') === 'expired') {
+            setSessionExpired(true);
+        }
+    }, [location]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+        setSessionExpired(false);
         setLoading(true);
         try {
             await login(email, password);
         } catch (err) {
-            console.error('Login error:', err);
-            setError(err.response?.data?.message || 'Email atau password salah. Silakan coba lagi.');
+            if (err.response?.status === 429) {
+                setError('Terlalu banyak percobaan login. Silakan tunggu 1 menit sebelum mencoba lagi.');
+            } else {
+                setError(err.response?.data?.message || 'Email atau password salah. Silakan coba lagi.');
+            }
         } finally {
             setLoading(false);
         }
@@ -41,6 +56,13 @@ export default function Login() {
                     <h2 className="font-serif text-xl font-bold text-slate-800">Masuk Portal</h2>
                     <p className="text-slate-500 text-xs mt-1">Silakan masukkan akun pengelola Anda</p>
                 </div>
+
+                {sessionExpired && (
+                    <div className="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-xl flex items-start space-x-2.5 mb-4 text-xs font-semibold">
+                        <ShieldAlert className="w-4 h-4 shrink-0 text-amber-600 mt-0.5" />
+                        <span>Sesi Anda telah berakhir. Silakan masuk kembali.</span>
+                    </div>
+                )}
 
                 {error && (
                     <div className="bg-rose-50 border border-rose-200 text-rose-800 p-4 rounded-xl flex items-start space-x-2.5 mb-6 text-xs font-semibold">

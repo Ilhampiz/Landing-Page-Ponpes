@@ -1,35 +1,14 @@
 import { useState, useEffect } from 'react';
-import { BookOpen, Menu, X, ArrowRight } from 'lucide-react';
+import { BookOpen, Menu, X, UserPlus } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
-import api from '../api/axios';
+import { useSettings } from '../context/SettingsContext';
 
 export default function Navbar() {
     const [open, setOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const location = useLocation();
     const activeRoute = location.pathname;
-
-    const [settings, setSettings] = useState({
-        nama_pesantren: '',
-        logo: '',
-    });
-
-    useEffect(() => {
-        const fetchSettings = async () => {
-            try {
-                const res = await api.get('/settings');
-                if (res.data) {
-                    setSettings({
-                        nama_pesantren: res.data.nama_pesantren || '',
-                        logo: res.data.logo || '',
-                    });
-                }
-            } catch (err) {
-                console.error('Error fetching settings for Navbar:', err);
-            }
-        };
-        fetchSettings();
-    }, []);
+    const { settings } = useSettings();
 
     // Menangani efek scroll untuk merubah gaya Navbar secara dinamis
     useEffect(() => {
@@ -67,10 +46,10 @@ export default function Navbar() {
                     onClick={() => setOpen(false)}
                     className="flex items-center gap-3 group no-underline"
                 >
-                    {settings.logo ? (
+                    {settings?.logo ? (
                         <div className="w-10 h-10 rounded-xl overflow-hidden border border-slate-100 flex items-center justify-center p-1 bg-white">
                             <img 
-                                src={settings.logo.startsWith('http') ? settings.logo : `http://localhost:8000${settings.logo}`} 
+                                src={settings.logo.startsWith('http') ? settings.logo : `http://pesantren-api.test${settings.logo}`} 
                                 alt="Logo" 
                                 className="max-w-full max-h-full object-contain" 
                             />
@@ -80,13 +59,22 @@ export default function Navbar() {
                             <BookOpen size={20} className="transition-transform duration-300 group-hover:rotate-6" />
                         </div>
                     )}
-                    <div className="flex flex-col">
-                        <span className="font-serif text-base sm:text-lg font-bold leading-none text-brand-green-dark tracking-tight">
-                            {settings.nama_pesantren || 'Pondok Pesantren'}
-                        </span>
-                        <span className="font-sans text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-brand-gold-main mt-1">
-                            Islamic Boarding School
-                        </span>
+                    <div className="flex flex-col justify-center">
+                        {settings === null ? (
+                            <div className="space-y-1.5 py-0.5">
+                                <div className="h-3.5 w-32 bg-slate-200/70 animate-pulse rounded" />
+                                <div className="h-2 w-20 bg-slate-200/50 animate-pulse rounded" />
+                            </div>
+                        ) : (
+                            <>
+                                <span className="font-serif text-base sm:text-lg font-bold leading-none text-brand-green-dark tracking-tight">
+                                    {settings?.nama_pesantren || 'Pondok Pesantren'}
+                                </span>
+                                <span className="font-sans text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-brand-gold-main mt-1">
+                                    {settings?.tagline || 'Islamic Boarding School'}
+                                </span>
+                            </>
+                        )}
                     </div>
                 </Link>
 
@@ -117,11 +105,11 @@ export default function Navbar() {
 
                     {/* CTA Button */}
                     <Link
-                        to="/ppdb"
-                        className="group flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-green-main hover:bg-brand-green-dark text-white font-sans font-semibold text-sm transition-all duration-300 hover:shadow-premium hover:-translate-y-0.5 active:translate-y-0 no-underline"
+                        to="/formulir-pendaftaran"
+                        className="inline-flex items-center gap-2 bg-brand-green-main hover:bg-brand-green-dark text-white font-sans font-bold text-sm px-4 py-2 rounded-xl no-underline transition-all duration-300 hover:-translate-y-0.5 shadow-sm hover:shadow-premium group"
                     >
-                        <span>PPDB Online</span>
-                        <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-1" />
+                        <UserPlus size={15} />
+                        <span>Daftar Sekarang</span>
                     </Link>
                 </div>
 
@@ -156,19 +144,18 @@ export default function Navbar() {
                             </Link>
                         );
                     })}
-                    
-                    <div className="h-px bg-slate-100 my-2" />
-                    
-                    {/* Mobile CTA */}
-                    <Link
-                        to="/ppdb"
-                        onClick={() => setOpen(false)}
-                        className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-brand-green-main hover:bg-brand-green-dark text-white font-sans font-semibold text-sm transition-all duration-300 shadow-premium no-underline"
-                    >
-                        <span>Daftar PPDB Online</span>
-                        <ArrowRight size={14} />
-                    </Link>
+
                 </nav>
+
+                {/* Mobile CTA */}
+                <Link
+                    to="/formulir-pendaftaran"
+                    onClick={() => setOpen(false)}
+                    className="inline-flex items-center justify-center gap-2 bg-brand-green-main hover:bg-brand-green-dark text-white font-sans font-bold text-sm px-4 py-3 rounded-xl no-underline transition-colors w-full mt-1"
+                >
+                    <UserPlus size={15} />
+                    <span>Daftar Sekarang</span>
+                </Link>
             </div>
         </nav>
     );

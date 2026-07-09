@@ -18,10 +18,10 @@ const FacebookIcon = () => (
 
 export default function Kontak() {
     const [settings, setSettings] = useState({
-        alamat: 'Jl. Raya Pesantren No. 123, Sleman, Yogyakarta',
-        no_telp: '08123456789',
+        alamat: '',
+        no_telp: '',
         no_wa: '',
-        email_kontak: 'info@pesantren.com',
+        email_kontak: '',
         link_ig: '',
         link_fb: '',
         link_instagram: '',

@@ -18,23 +18,23 @@ class GalleryController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title'      => 'required|string',
-            'image_path' => 'required|string',
+            'title'      => 'required|string|max:255',
+            'image_path' => 'required|string|max:2048',
         ]);
 
-        $gallery = Gallery::create($request->all());
+        $gallery = Gallery::create($request->only(['title', 'image_path', 'category']));
         return response()->json($gallery, 201);
     }
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'title'      => 'required|string',
-            'image_path' => 'required|string',
+        $validated = $request->validate([
+            'title'      => 'sometimes|required|string|max:255',
+            'image_path' => 'sometimes|required|string|max:2048',
         ]);
 
         $gallery = Gallery::findOrFail($id);
-        $gallery->update($request->all());
+        $gallery->update($validated);
         return response()->json($gallery);
     }
 
@@ -47,7 +47,7 @@ class GalleryController extends Controller
     public function upload(Request $request)
     {
         $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:5120',
+            'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:5120', // SVG dihapus — rentan SVG XSS
         ]);
 
         if ($request->file('image')) {

@@ -52,8 +52,15 @@ class NewsController extends Controller
 
     public function update(Request $request, $id)
     {
+        $validated = $request->validate([
+            'title'        => 'sometimes|required|string|max:255',
+            'content'      => 'sometimes|required|string',
+            'thumbnail'    => 'nullable|string|max:2048',
+            'published_at' => 'nullable|date',
+        ]);
+
         $news = News::findOrFail($id);
-        $news->update($request->all());
+        $news->update($validated);
         return response()->json($news);
     }
 

@@ -47,7 +47,7 @@ export default function Dashboard() {
         { title: 'Jumlah Berita', count: stats.newsCount, path: '/admin/news', icon: Newspaper, iconColor: 'text-blue-600 bg-blue-50 border-blue-100' },
         { title: 'Jumlah Foto', count: stats.galleryCount, path: '/admin/gallery', icon: Image, iconColor: 'text-indigo-600 bg-indigo-50 border-indigo-100' },
         { title: 'Jumlah Program', count: stats.programCount, path: '/admin/programs', icon: GraduationCap, iconColor: 'text-amber-600 bg-amber-50 border-amber-100' },
-        { title: 'Pendaftar PPDB', count: stats.ppdbCount, path: '/admin/ppdb', icon: Users, iconColor: 'text-emerald-600 bg-emerald-50 border-emerald-100' }
+        { title: 'Pendaftar Baru', count: stats.ppdbCount, path: '/admin/pendaftaran', icon: Users, iconColor: 'text-emerald-600 bg-emerald-50 border-emerald-100' }
     ];
 
     return (

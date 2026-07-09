@@ -2,7 +2,7 @@ import { useState } from 'react';
 import api from '../../api/axios';
 import { CheckCircle2, AlertCircle, Send, Sparkles, ArrowRight, ArrowLeft, User, Phone, GraduationCap } from 'lucide-react';
 
-export default function Ppdb() {
+export default function FormulirPendaftaran() {
     const [step, setStep] = useState(1);
     const [formData, setFormData] = useState({
         nama_calon_santri: '',
@@ -79,7 +79,7 @@ export default function Ppdb() {
         try {
             const response = await api.post('/ppdb', formData);
             if (response.status === 201 || response.status === 200) {
-                setSuccessMsg('Pendaftaran berhasil dikirim! Panitia PPDB akan segera menghubungi Anda melalui nomor WhatsApp.');
+                setSuccessMsg('Pendaftaran berhasil dikirim! Panitia pendaftaran akan segera menghubungi Anda melalui nomor WhatsApp.');
                 setFormData({
                     nama_calon_santri: '',
                     nama_orang_tua: '',
@@ -93,7 +93,7 @@ export default function Ppdb() {
                 setStep(1);
             }
         } catch (err) {
-            console.error('Error submitting PPDB form:', err);
+            console.error('Error submitting registration form:', err);
             if (err.response && err.response.data && err.response.data.errors) {
                 setFieldErrors(err.response.data.errors);
                 setErrorMsg('Gagal mengirim pendaftaran. Silakan periksa kembali isian formulir Anda.');
@@ -111,7 +111,7 @@ export default function Ppdb() {
             <div className="text-center mb-12">
                 <span className="text-brand-green-main font-sans font-bold uppercase tracking-widest text-xs block mb-2">Penerimaan Baru</span>
                 <h2 className="font-serif text-3xl md:text-4xl font-bold tracking-tight text-text-title">
-                    Pendaftaran Santri Baru Online (PPDB)
+                    Formulir Pendaftaran Santri Baru
                 </h2>
                 <div className="w-12 h-[3px] bg-brand-gold-main mx-auto mt-4 rounded-full" />
             </div>

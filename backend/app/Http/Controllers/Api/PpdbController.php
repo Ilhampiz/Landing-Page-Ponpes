@@ -11,20 +11,20 @@ class PpdbController extends Controller
     // Public - submit formulir
     public function store(Request $request)
     {
-        $request->validate([
-            'nama_calon_santri' => 'required|string',
-            'nama_orang_tua'    => 'required|string',
-            'tempat_lahir'      => 'required|string',
+        $validated = $request->validate([
+            'nama_calon_santri' => 'required|string|max:255',
+            'nama_orang_tua'    => 'required|string|max:255',
+            'tempat_lahir'      => 'required|string|max:100',
             'tanggal_lahir'     => 'required|date',
-            'alamat'            => 'required|string',
-            'no_hp'             => 'required|string',
+            'alamat'            => 'required|string|max:1000',
+            'no_hp'             => 'required|string|max:20|regex:/^[0-9+\-\s]+$/',
+            'email'             => 'nullable|email|max:100',
             'jenjang'           => 'required|in:MI/SD,MTs/SMP,MA/SMA',
         ]);
 
-        $data = $request->all();
-        $data['status'] = 'pending';
+        $validated['status'] = 'pending'; // Status hanya boleh diset oleh sistem, bukan user
 
-        $ppdb = PpdbRegistration::create($data);
+        $ppdb = PpdbRegistration::create($validated);
         return response()->json($ppdb, 201);
     }
 

@@ -24,7 +24,7 @@ Route::post('/ppdb', [PpdbController::class, 'store']);
 Route::prefix('admin')->group(function () {
 
     // Auth
-    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 
     // Protected
     Route::middleware('auth:sanctum')->group(function () {

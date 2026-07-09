@@ -16,7 +16,7 @@ export default function PublicLayout({ children }) {
 
                 // 1. Favicon
                 if (data.favicon) {
-                    const faviconUrl = data.favicon.startsWith('http') ? data.favicon : `http://localhost:8000${data.favicon}`;
+                    const faviconUrl = data.favicon.startsWith('http') ? data.favicon : `http://pesantren-api.test${data.favicon}`;
                     let link = document.querySelector("link[rel~='icon']");
                     if (!link) {
                         link = document.createElement('link');

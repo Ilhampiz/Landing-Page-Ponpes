@@ -12,6 +12,6 @@ export const adminMenuItems = [
     { name: 'Berita', path: '/admin/news', icon: Newspaper },
     { name: 'Galeri', path: '/admin/gallery', icon: ImageIcon },
     { name: 'Program', path: '/admin/programs', icon: GraduationCap },
-    { name: 'PPDB', path: '/admin/ppdb', icon: Users },
+    { name: 'Pendaftaran', path: '/admin/pendaftaran', icon: Users },
     {name: 'Profil & Tampilan', path: '/admin/settings', icon: SettingsIcon },
 ];

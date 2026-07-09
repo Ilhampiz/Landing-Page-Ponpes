@@ -9,6 +9,7 @@ export default function Profil() {
         sejarah_singkat: '',
         visi: '',
         misi: '',
+        nama_pesantren: '',
     });
 
     useEffect(() => {
@@ -20,6 +21,7 @@ export default function Profil() {
                         sejarah_singkat: res.data.sejarah_singkat || '',
                         visi: res.data.visi || '',
                         misi: res.data.misi || '',
+                        nama_pesantren: res.data.nama_pesantren || '',
                     });
                 }
             } catch (err) {
@@ -62,7 +64,7 @@ export default function Profil() {
                                     Awal Mula Perjalanan
                                 </h3>
                                 <p className="font-sans text-sm md:text-base text-text-body leading-relaxed mb-3">
-                                    Didirikan oleh K.H. Ahmad Dahlan, Pondok Pesantren Al-Qur'anul Karim bermula dari sebuah mushola kecil dengan beberapa santri yang memiliki tekad kuat mendalami Al-Qur'an secara intensif.
+                                    Didirikan oleh K.H. Ahmad Dahlan, {settings.nama_pesantren || "Pondok Pesantren Al-Qur'anul Karim"} bermula dari sebuah mushola kecil dengan beberapa santri yang memiliki tekad kuat mendalami Al-Qur'an secara intensif.
                                 </p>
                                 
                                 {/* Timeline Accordion Toggle */}

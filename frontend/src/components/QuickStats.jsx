@@ -4,15 +4,15 @@ import { Calendar, GraduationCap, BookOpen, Users } from 'lucide-react';
 export default function QuickStats() {
     const stats = [
         {
-            value: '10+',
-            label: 'Tahun Mengabdi',
-            icon: Calendar,
-            colorClass: 'text-brand-green-main bg-brand-green-light',
-        },
-        {
             value: '500+',
             label: 'Santri Aktif',
             icon: GraduationCap,
+            colorClass: 'text-brand-green-main bg-brand-green-light',
+        },
+        {
+            value: '40+',
+            label: 'Ustadz & Ustadzah',
+            icon: Users,
             colorClass: 'text-brand-gold-main bg-brand-gold-light',
         },
         {
@@ -22,38 +22,37 @@ export default function QuickStats() {
             colorClass: 'text-brand-green-main bg-brand-green-light',
         },
         {
-            value: '40+',
-            label: 'Ustadz & Ustadzah',
-            icon: Users,
+            value: '10+',
+            label: 'Tahun Mengabdi',
+            icon: Calendar,
             colorClass: 'text-brand-gold-main bg-brand-gold-light',
         },
     ];
 
     return (
-        <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 -mt-16 md:-mt-20">
-            <div className="bg-white p-6 md:p-8 rounded-3xl border border-slate-100/80 shadow-premium grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 items-center">
+        <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 -mt-10 md:-mt-14">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-5">
                 {stats.map((stat, index) => {
                     const IconComponent = stat.icon;
                     return (
                         <div 
                             key={index} 
-                            className={`flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left p-2 rounded-2xl transition-all duration-300 hover:bg-slate-50/50 ${
-                                index > 0 
-                                    ? 'border-t sm:border-t-0 sm:border-l border-slate-100 pt-6 sm:pt-2 sm:pl-6' 
-                                    : 'sm:pl-2'
-                            }`}
+                            className="bg-white p-4 md:p-5 rounded-2xl border border-slate-200/60 shadow-lg flex flex-col items-center text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
                         >
-                            <div className={`p-3.5 rounded-xl shrink-0 ${stat.colorClass} shadow-sm transition-transform duration-300 hover:scale-110`}>
-                                <IconComponent className="w-6 h-6" />
+                            {/* Icon Wrapper */}
+                            <div className={`p-2.5 rounded-xl shrink-0 ${stat.colorClass} shadow-sm transition-transform duration-300 hover:scale-105 mb-3`}>
+                                <IconComponent className="w-5.5 h-5.5" />
                             </div>
-                            <div className="flex flex-col">
-                                <span className="font-sans text-2xl md:text-3xl font-bold text-text-title tracking-tight leading-none">
-                                    {stat.value}
-                                </span>
-                                <span className="font-sans text-xs md:text-sm font-medium text-text-body mt-2">
-                                    {stat.label}
-                                </span>
-                            </div>
+                            
+                            {/* Value */}
+                            <span className="font-sans text-2xl md:text-3xl font-extrabold text-brand-green-dark tracking-tight leading-none">
+                                {stat.value}
+                            </span>
+                            
+                            {/* Label */}
+                            <span className="font-sans text-[10px] md:text-xs font-semibold text-slate-500 mt-2 uppercase tracking-wider">
+                                {stat.label}
+                            </span>
                         </div>
                     );
                 })}

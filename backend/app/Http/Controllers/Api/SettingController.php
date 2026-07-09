@@ -19,7 +19,7 @@ class SettingController extends Controller
     public function update(Request $request)
     {
         $validated = $request->validate([
-            'nama_pesantren' => 'required|string|max:255',
+            'nama_pesantren' => 'nullable|string|max:255',
             'tagline' => 'nullable|string|max:255',
             'deskripsi_singkat' => 'nullable|string',
             'logo' => 'nullable|string',
@@ -42,6 +42,9 @@ class SettingController extends Controller
             'visi' => 'nullable|string',
             'misi' => 'nullable|string',
             'sambutan_pimpinan' => 'nullable|string',
+            'sambutan_image' => 'nullable|string',
+            'nama_pimpinan' => 'nullable|string|max:255',
+            'jabatan_pimpinan' => 'nullable|string|max:255',
             'sejarah_singkat' => 'nullable|string',
         ]);
 

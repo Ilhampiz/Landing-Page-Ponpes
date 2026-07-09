@@ -1,49 +1,62 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 /**
- * ScrollReveal Component
- * Wraps elements and animates them when they enter the viewport using Intersection Observer.
+ * ScrollReveal Component — Enhanced
+ * Supports directional animations: 'up' | 'down' | 'left' | 'right' | 'zoom' | 'fade'
  */
-export default function ScrollReveal({ children, className = "", delay = 0 }) {
-    const [isIntersecting, setIsIntersecting] = useState(false);
+export default function ScrollReveal({
+    children,
+    className = '',
+    delay = 0,
+    direction = 'up',
+    duration = 700,
+    once = true,
+}) {
+    const [visible, setVisible] = useState(false);
     const ref = useRef(null);
 
     useEffect(() => {
+        const el = ref.current;
+        if (!el) return;
+
         const observer = new IntersectionObserver(
             ([entry]) => {
                 if (entry.isIntersecting) {
-                    setIsIntersecting(true);
-                    if (ref.current) {
-                        observer.unobserve(ref.current);
-                    }
+                    setVisible(true);
+                    if (once) observer.unobserve(el);
+                } else if (!once) {
+                    setVisible(false);
                 }
             },
-            {
-                threshold: 0.05,
-                rootMargin: "0px 0px -40px 0px"
-            }
+            { threshold: 0.07, rootMargin: '0px 0px -48px 0px' }
         );
 
-        if (ref.current) {
-            observer.observe(ref.current);
-        }
+        observer.observe(el);
+        return () => observer.unobserve(el);
+    }, [once]);
 
-        return () => {
-            if (ref.current) {
-                observer.unobserve(ref.current);
-            }
-        };
-    }, []);
+    const transforms = {
+        up:    { hidden: 'translate3d(0,40px,0)',   visible: 'translate3d(0,0,0)'   },
+        down:  { hidden: 'translate3d(0,-30px,0)',  visible: 'translate3d(0,0,0)'   },
+        left:  { hidden: 'translate3d(-48px,0,0)',  visible: 'translate3d(0,0,0)'   },
+        right: { hidden: 'translate3d(48px,0,0)',   visible: 'translate3d(0,0,0)'   },
+        zoom:  { hidden: 'scale3d(0.88,0.88,1)',    visible: 'scale3d(1,1,1)'       },
+        fade:  { hidden: 'translate3d(0,0,0)',      visible: 'translate3d(0,0,0)'   },
+    };
+
+    const t = transforms[direction] || transforms.up;
 
     return (
         <div
             ref={ref}
-            className={`transition-all duration-700 ease-out transform ${
-                isIntersecting 
-                    ? 'opacity-100 translate-y-0 scale-100' 
-                    : 'opacity-0 translate-y-8 scale-[0.98]'
-            } ${className}`}
-            style={{ transitionDelay: `${delay}ms` }}
+            className={className}
+            style={{
+                opacity: visible ? 1 : 0,
+                transform: visible ? t.visible : t.hidden,
+                transition: `opacity ${duration}ms ${delay}ms cubic-bezier(.25,.8,.25,1),
+                             transform ${duration}ms ${delay}ms cubic-bezier(.25,.8,.25,1)`,
+                willChange: 'opacity, transform',
+            }}
         >
             {children}
         </div>
