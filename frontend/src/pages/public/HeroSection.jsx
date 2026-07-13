@@ -46,9 +46,12 @@ export default function HeroSection() {
     }, [loading, settings]);
 
     const getHeroImageUrl = () => {
+        if (loading) return ''; // don't load image during fetch
         if (settings?.hero_image) {
             if (settings.hero_image.startsWith('http')) return settings.hero_image;
-            return `http://pesantren-api.test${settings.hero_image}`;
+            const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+            const baseDomain = baseURL.replace(/\/api$/, '');
+            return `${baseDomain}${settings.hero_image}`;
         }
         return '/pesantren_hero.png';
     };
@@ -57,11 +60,15 @@ export default function HeroSection() {
         <section
             ref={sectionRef}
             id="beranda"
-            className="relative min-h-[85vh] md:min-h-[90vh] flex flex-col justify-center items-center bg-cover bg-center bg-no-repeat pt-36 pb-32 px-4 sm:px-6 lg:px-8 overflow-hidden"
-            style={{
-                backgroundImage: `linear-gradient(rgba(2, 44, 34, 0.82), rgba(2, 44, 34, 0.88)), url('${getHeroImageUrl()}')`,
-            }}
+            className="relative min-h-[85vh] md:min-h-[90vh] flex flex-col justify-center items-center pt-36 pb-32 px-4 sm:px-6 lg:px-8 overflow-hidden bg-[#022c22]"
         >
+            {/* Background Image Layer */}
+            <div 
+                className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1000 ${loading ? 'opacity-0' : 'opacity-100'}`}
+                style={{
+                    backgroundImage: loading ? 'none' : `linear-gradient(rgba(2, 44, 34, 0.82), rgba(2, 44, 34, 0.88)), url('${getHeroImageUrl()}')`,
+                }}
+            />
             {/* Radial glow from top */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-brand-gold-main/5 rounded-full blur-3xl pointer-events-none" />
 
@@ -83,19 +90,19 @@ export default function HeroSection() {
                 />
             ))}
 
-            {/* Floating Social Media Sidebar */}
+            {/* Fixed Floating Social Media Sidebar */}
             {!loading && settings && (
-                <div className="absolute right-0 top-1/2 -translate-y-1/2 flex flex-col gap-3 z-30 pr-3 sm:pr-4 md:pr-6">
+                <div className="fixed right-3 sm:right-5 top-1/2 -translate-y-1/2 flex flex-col gap-3 z-50">
                     {(settings.link_instagram || settings.link_ig) && (
                         <a
                             href={settings.link_instagram || settings.link_ig}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="w-10 h-10 rounded-xl bg-brand-green-main hover:bg-brand-gold-main text-white flex items-center justify-center transition-all duration-300 shadow-md hover:-translate-x-1 hover:scale-110 border border-white/10"
+                            className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-brand-green-main/90 backdrop-blur-md hover:bg-brand-gold-main text-white flex items-center justify-center transition-all duration-300 shadow-lg hover:-translate-x-1.5 hover:scale-110 border border-white/20"
                             title="Instagram"
                             style={{ animation: 'slideInRight 0.6s 0.8s both' }}
                         >
-                            <InstagramIcon size={18} />
+                            <InstagramIcon size={20} />
                         </a>
                     )}
                     {(settings.link_facebook || settings.link_fb) && (
@@ -103,11 +110,11 @@ export default function HeroSection() {
                             href={settings.link_facebook || settings.link_fb}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="w-10 h-10 rounded-xl bg-brand-green-main hover:bg-brand-gold-main text-white flex items-center justify-center transition-all duration-300 shadow-md hover:-translate-x-1 hover:scale-110 border border-white/10"
+                            className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-brand-green-main/90 backdrop-blur-md hover:bg-brand-gold-main text-white flex items-center justify-center transition-all duration-300 shadow-lg hover:-translate-x-1.5 hover:scale-110 border border-white/20"
                             title="Facebook"
                             style={{ animation: 'slideInRight 0.6s 1.0s both' }}
                         >
-                            <FacebookIcon size={18} />
+                            <FacebookIcon size={20} />
                         </a>
                     )}
                     {settings.link_youtube && (
@@ -115,11 +122,11 @@ export default function HeroSection() {
                             href={settings.link_youtube}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="w-10 h-10 rounded-xl bg-brand-green-main hover:bg-brand-gold-main text-white flex items-center justify-center transition-all duration-300 shadow-md hover:-translate-x-1 hover:scale-110 border border-white/10"
+                            className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-brand-green-main/90 backdrop-blur-md hover:bg-brand-gold-main text-white flex items-center justify-center transition-all duration-300 shadow-lg hover:-translate-x-1.5 hover:scale-110 border border-white/20"
                             title="YouTube"
                             style={{ animation: 'slideInRight 0.6s 1.2s both' }}
                         >
-                            <YoutubeIcon size={18} />
+                            <YoutubeIcon size={20} />
                         </a>
                     )}
                 </div>

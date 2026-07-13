@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description');
+            $table->text('focus_and_excellence')->nullable();
             $table->string('icon_or_image')->nullable();
             $table->integer('order')->default(0);
             $table->timestamps();

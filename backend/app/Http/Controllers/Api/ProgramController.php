@@ -18,10 +18,11 @@ class ProgramController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title'        => 'required|string|max:255',
-            'description'  => 'required|string',
-            'icon_or_image'=> 'nullable|string|max:2048',
-            'order'        => 'nullable|integer|min:0',
+            'title'               => 'required|string|max:255',
+            'description'         => 'required|string',
+            'focus_and_excellence'=> 'nullable|string',
+            'icon_or_image'       => 'nullable|string|max:2048',
+            'order'               => 'nullable|integer|min:0',
         ]);
 
         $program = Program::create($validated);
@@ -31,10 +32,11 @@ class ProgramController extends Controller
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
-            'title'        => 'sometimes|required|string|max:255',
-            'description'  => 'sometimes|required|string',
-            'icon_or_image'=> 'nullable|string|max:2048',
-            'order'        => 'nullable|integer|min:0',
+            'title'               => 'sometimes|required|string|max:255',
+            'description'         => 'sometimes|required|string',
+            'focus_and_excellence'=> 'nullable|string',
+            'icon_or_image'       => 'nullable|string|max:2048',
+            'order'               => 'nullable|integer|min:0',
         ]);
 
         $program = Program::findOrFail($id);

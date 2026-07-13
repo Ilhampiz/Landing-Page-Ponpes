@@ -1,28 +1,32 @@
 import React from 'react';
 import { Calendar, GraduationCap, BookOpen, Users } from 'lucide-react';
+import { useSettings } from '../context/SettingsContext';
 
 export default function QuickStats() {
+    const { settings: globalSettings } = useSettings();
+    const settings = globalSettings || {};
+
     const stats = [
         {
-            value: '500+',
+            value: settings.stats_santri || '500+',
             label: 'Santri Aktif',
             icon: GraduationCap,
             colorClass: 'text-brand-green-main bg-brand-green-light',
         },
         {
-            value: '40+',
+            value: settings.stats_asatidzah || '40+',
             label: 'Ustadz & Ustadzah',
             icon: Users,
             colorClass: 'text-brand-gold-main bg-brand-gold-light',
         },
         {
-            value: '250+',
+            value: settings.stats_alumni || '250+',
             label: 'Alumni Tahfidz',
             icon: BookOpen,
             colorClass: 'text-brand-green-main bg-brand-green-light',
         },
         {
-            value: '10+',
+            value: settings.stats_tahun || '10+',
             label: 'Tahun Mengabdi',
             icon: Calendar,
             colorClass: 'text-brand-gold-main bg-brand-gold-light',

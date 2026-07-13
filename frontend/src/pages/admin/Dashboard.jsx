@@ -17,30 +17,62 @@ export default function Dashboard() {
     const [error, setError] = useState('');
 
     useEffect(() => {
+        let isMounted = true;
+
         const fetchDashboardData = async () => {
             try {
-                const [newsRes, galleryRes, programsRes, ppdbRes] = await Promise.all([
+                const results = await Promise.allSettled([
                     api.get('/admin/news'),
                     api.get('/admin/gallery'),
                     api.get('/admin/programs'),
                     api.get('/admin/ppdb')
                 ]);
 
+                if (!isMounted) return;
+
+                const getCount = (result) => {
+                    if (result.status === 'fulfilled') {
+                        const data = result.value.data;
+                        return Array.isArray(data) ? data.length : (data?.data?.length || 0);
+                    }
+                    return null;
+                };
+
+                const newsCount = getCount(results[0]);
+                const galleryCount = getCount(results[1]);
+                const programCount = getCount(results[2]);
+                const ppdbCount = getCount(results[3]);
+
                 setStats({
-                    newsCount: Array.isArray(newsRes.data) ? newsRes.data.length : (newsRes.data?.data?.length || 0),
-                    galleryCount: Array.isArray(galleryRes.data) ? galleryRes.data.length : (galleryRes.data?.data?.length || 0),
-                    programCount: Array.isArray(programsRes.data) ? programsRes.data.length : (programsRes.data?.data?.length || 0),
-                    ppdbCount: Array.isArray(ppdbRes.data) ? ppdbRes.data.length : (ppdbRes.data?.data?.length || 0),
+                    newsCount: newsCount !== null ? newsCount : 0,
+                    galleryCount: galleryCount !== null ? galleryCount : 0,
+                    programCount: programCount !== null ? programCount : 0,
+                    ppdbCount: ppdbCount !== null ? ppdbCount : 0,
                 });
+
+                const failedAny = results.some(r => r.status === 'rejected');
+                if (failedAny) {
+                    setError('Beberapa data statistik gagal dimuat.');
+                } else {
+                    setError('');
+                }
             } catch (err) {
                 console.error('Error fetching dashboard stats:', err);
-                setError('Gagal memuat beberapa data statistik.');
+                if (isMounted) {
+                    setError('Gagal memuat data statistik.');
+                }
             } finally {
-                setLoading(false);
+                if (isMounted) {
+                    setLoading(false);
+                }
             }
         };
 
         fetchDashboardData();
+
+        return () => {
+            isMounted = false;
+        };
     }, []);
 
     const cards = [
@@ -58,9 +90,9 @@ export default function Dashboard() {
                 </span>
             </PageHeader>
 
-            <main className="flex-grow p-6 md:p-8 overflow-y-auto max-w-7xl w-full space-y-6">
+            <main className="flex-grow p-4 sm:p-6 md:p-8 overflow-y-auto max-w-7xl w-full space-y-6">
                 {/* Welcome banner */}
-                <div className="bg-white border border-slate-200 p-6 md:p-8 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm relative overflow-hidden">
+                <div className="bg-white border border-slate-200 p-4 sm:p-6 md:p-8 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm relative overflow-hidden">
                     <div className="space-y-1 relative z-10">
                         <h2 className="text-base sm:text-lg font-serif font-bold text-slate-900">Selamat Datang Kembali, {admin?.name || 'Admin'}!</h2>
                         <p className="text-slate-500 text-[11px] sm:text-xs md:text-sm max-w-xl leading-relaxed">
@@ -93,7 +125,7 @@ export default function Dashboard() {
                                 >
                                     <div className="flex justify-between items-start">
                                         <div className="space-y-1">
-                                            <p className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider">{card.title}</p>
+                                            <p className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">{card.title}</p>
                                             {loading ? (
                                                 <div className="h-9 w-16 bg-slate-100 animate-pulse rounded-md" />
                                             ) : (

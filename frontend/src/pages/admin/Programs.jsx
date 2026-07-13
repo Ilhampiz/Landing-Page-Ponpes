@@ -5,6 +5,7 @@ import PageHeader from '../../components/admin/PageHeader';
 import LoadingState from '../../components/admin/LoadingState';
 import EmptyState from '../../components/admin/EmptyState';
 import FormModal from '../../components/admin/FormModal';
+import { useImageUpload } from '../../hooks/useImageUpload';
 
 export default function Programs() {
     const [programs, setPrograms] = useState([]);
@@ -23,10 +24,29 @@ export default function Programs() {
     const [formData, setFormData] = useState({
         title: '',
         description: '',
+        focus_and_excellence: '',
         icon_or_image: '',
         order: 0,
     });
     const [submitting, setSubmitting] = useState(false);
+    const { uploadImage, uploading: uploadingImage } = useImageUpload();
+
+    const getImageUrl = (path) => {
+        if (!path) return '';
+        if (path.startsWith('http')) return path;
+        const baseURL = api.defaults.baseURL || 'http://localhost:8000/api';
+        const baseDomain = baseURL.replace(/\/api$/, '');
+        return `${baseDomain}${path}`;
+    };
+
+    const handleImageUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const path = await uploadImage(file);
+        if (path) {
+            setFormData(prev => ({ ...prev, icon_or_image: path }));
+        }
+    };
 
     const fetchPrograms = async () => {
         setLoading(true);
@@ -50,6 +70,7 @@ export default function Programs() {
         setFormData({
             title: '',
             description: '',
+            focus_and_excellence: '',
             icon_or_image: '',
             order: programs.length,
         });
@@ -61,6 +82,7 @@ export default function Programs() {
         setFormData({
             title: item.title || '',
             description: item.description || '',
+            focus_and_excellence: item.focus_and_excellence || '',
             icon_or_image: item.icon_or_image || '',
             order: item.order || 0,
         });
@@ -126,7 +148,7 @@ export default function Programs() {
                 </button>
             </PageHeader>
 
-            <main className="flex-grow p-6 md:p-8 overflow-y-auto max-w-7xl w-full space-y-6">
+            <main className="flex-grow p-4 sm:p-6 md:p-8 overflow-y-auto max-w-7xl w-full space-y-6">
                     {success && (
                         <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-xl text-xs font-semibold">
                             {success}
@@ -184,6 +206,7 @@ export default function Programs() {
                                                     <th className="px-6 py-4 font-semibold">Urutan</th>
                                                     <th className="px-6 py-4 font-semibold">Nama Program</th>
                                                     <th className="px-6 py-4 font-semibold">Deskripsi</th>
+                                                    <th className="px-6 py-4 font-semibold">Fokus & Unggulan</th>
                                                     <th className="px-6 py-4 font-semibold text-right">Aksi</th>
                                                 </tr>
                                             </thead>
@@ -196,7 +219,8 @@ export default function Programs() {
                                                             </span>
                                                         </td>
                                                         <td className="px-6 py-4 font-bold text-slate-900 text-xs sm:text-sm">{item.title}</td>
-                                                        <td className="px-6 py-4 text-[11px] sm:text-xs text-slate-500 max-w-[150px] sm:max-w-xs md:max-w-md truncate leading-relaxed" title={item.description}>{item.description}</td>
+                                                        <td className="px-6 py-4 text-[11px] sm:text-xs text-slate-500 max-w-[140px] sm:max-w-xs truncate leading-relaxed" title={item.description}>{item.description}</td>
+                                                        <td className="px-6 py-4 text-[11px] sm:text-xs text-emerald-700 max-w-[140px] sm:max-w-xs truncate font-medium" title={item.focus_and_excellence}>{item.focus_and_excellence || '-'}</td>
                                                         <td className="px-6 py-4 text-right">
                                                             <div className="inline-flex items-center space-x-2.5">
                                                                 <button
@@ -307,14 +331,44 @@ export default function Programs() {
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="flex flex-col space-y-1.5">
-                                        <label className="text-xs font-bold text-slate-700">Ikon / URL Gambar (Opsional)</label>
-                                        <input
-                                            type="text"
-                                            value={formData.icon_or_image}
-                                            onChange={(e) => setFormData({ ...formData, icon_or_image: e.target.value })}
-                                            className="border border-slate-200 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-700/20 focus:border-emerald-700 bg-slate-50/50 hover:bg-slate-50 focus:bg-white transition-all placeholder-slate-400"
-                                            placeholder="Contoh: https://example.com/logo.png"
-                                        />
+                                        <label className="text-xs font-bold text-slate-700">Ikon / Gambar Program (Opsional)</label>
+                                        <div className="flex items-center gap-4 mt-2">
+                                            {formData.icon_or_image && (
+                                                <div className="w-16 h-16 rounded-xl overflow-hidden border border-slate-150 shrink-0 bg-slate-50 relative group">
+                                                    <img 
+                                                        src={getImageUrl(formData.icon_or_image)} 
+                                                        alt="Preview" 
+                                                        className="w-full h-full object-cover" 
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setFormData(prev => ({ ...prev, icon_or_image: '' }))}
+                                                        className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                                        title="Hapus gambar"
+                                                    >
+                                                        <div className="p-1.5 bg-rose-500 rounded-full text-white">
+                                                            <Trash2 size={12} />
+                                                        </div>
+                                                    </button>
+                                                </div>
+                                            )}
+                                            <div className="flex-grow">
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={handleImageUpload}
+                                                    className="hidden"
+                                                    id="program-image-upload"
+                                                />
+                                                <label
+                                                    htmlFor="program-image-upload"
+                                                    className="inline-flex items-center justify-center px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-705 font-bold rounded-xl text-xs cursor-pointer border border-slate-200 hover:border-slate-350 transition-all shadow-xs"
+                                                >
+                                                    {uploadingImage ? 'Mengunggah...' : 'Pilih & Upload Gambar'}
+                                                </label>
+                                                <p className="text-[10px] text-slate-400 mt-1">Bisa dikosongkan. Jika kosong, ikon default akan digunakan.</p>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div className="flex flex-col space-y-1.5">
                                         <label className="text-xs font-bold text-slate-700">Urutan Tampilan</label>
@@ -333,11 +387,25 @@ export default function Programs() {
                                     <label className="text-xs font-bold text-slate-700">Deskripsi Program</label>
                                     <textarea
                                         required
-                                        rows="5"
+                                        rows="4"
                                         value={formData.description}
                                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                         className="border border-slate-200 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-700/20 focus:border-emerald-700 bg-slate-50/50 hover:bg-slate-50 focus:bg-white transition-all resize-none placeholder-slate-400 leading-relaxed"
                                         placeholder="Tuliskan penjelasan lengkap mengenai program pendidikan ini..."
+                                    />
+                                </div>
+
+                                <div className="flex flex-col space-y-1.5">
+                                    <div className="flex justify-between items-center">
+                                        <label className="text-xs font-bold text-slate-700">Fokus & Unggulan Pembelajaran</label>
+                                        <span className="text-[10px] text-slate-450 font-medium">Gunakan bullet (•) untuk poin-poin</span>
+                                    </div>
+                                    <textarea
+                                        rows="4"
+                                        value={formData.focus_and_excellence}
+                                        onChange={(e) => setFormData({ ...formData, focus_and_excellence: e.target.value })}
+                                        className="border border-slate-200 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-700/20 focus:border-emerald-700 bg-slate-50/50 hover:bg-slate-50 focus:bg-white transition-all resize-none placeholder-slate-400 leading-relaxed font-sans"
+                                        placeholder="• Target hafalan mutqin 30 Juz bersanad&#10;• Kajian kitab kuning & metodologi salaf&#10;• Bilingual environment (Arabic & English)"
                                     />
                                 </div>
 

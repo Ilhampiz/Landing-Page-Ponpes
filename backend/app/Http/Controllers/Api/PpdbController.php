@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\PpdbRegistration;
+use App\Mail\PpdbStatusMail;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 
 class PpdbController extends Controller
@@ -18,13 +20,25 @@ class PpdbController extends Controller
             'tanggal_lahir'     => 'required|date',
             'alamat'            => 'required|string|max:1000',
             'no_hp'             => 'required|string|max:20|regex:/^[0-9+\-\s]+$/',
-            'email'             => 'nullable|email|max:100',
+            'email'             => 'required|email|max:100',
             'jenjang'           => 'required|in:MI/SD,MTs/SMP,MA/SMA',
+            'program_pilihan'   => 'nullable|string|max:255',
         ]);
 
         $validated['status'] = 'pending'; // Status hanya boleh diset oleh sistem, bukan user
 
         $ppdb = PpdbRegistration::create($validated);
+
+        // Kirim email notifikasi jika email diisi
+        if (!empty($ppdb->email)) {
+            try {
+                Mail::to($ppdb->email)->send(new PpdbStatusMail($ppdb));
+            } catch (\Exception $e) {
+                // Log error agar proses submit form tetap berhasil
+                logger()->error('Gagal mengirim email PPDB (store): ' . $e->getMessage());
+            }
+        }
+
         return response()->json($ppdb, 201);
     }
 
@@ -42,6 +56,17 @@ class PpdbController extends Controller
 
         $ppdb = PpdbRegistration::findOrFail($id);
         $ppdb->update(['status' => $request->status]);
+
+        // Kirim email notifikasi status baru jika email diisi
+        if (!empty($ppdb->email)) {
+            try {
+                Mail::to($ppdb->email)->send(new PpdbStatusMail($ppdb));
+            } catch (\Exception $e) {
+                // Log error agar proses update status tetap berhasil
+                logger()->error('Gagal mengirim email PPDB (updateStatus): ' . $e->getMessage());
+            }
+        }
+
         return response()->json($ppdb);
     }
 }

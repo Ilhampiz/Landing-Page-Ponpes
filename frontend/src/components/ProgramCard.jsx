@@ -14,7 +14,31 @@ const ArrowRightIcon = ({ size = 10 }) => (
   </svg>
 );
 
-export default function ProgramCard({ title, description, category }) {
+const TargetIcon = ({ size = 12 }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10"/>
+    <circle cx="12" cy="12" r="6"/>
+    <circle cx="12" cy="12" r="2"/>
+  </svg>
+);
+
+const CheckCircleIcon = ({ size = 13 }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+    <polyline points="22 4 12 14.01 9 11.01"/>
+  </svg>
+);
+
+import api from '../api/axios';
+
+export default function ProgramCard({ title, description, focus_and_excellence, category, icon_or_image }) {
+  const getImageUrl = (path) => {
+      if (!path) return '';
+      if (path.startsWith('http')) return path;
+      const baseURL = api.defaults.baseURL || 'http://localhost:8000/api';
+      const baseDomain = baseURL.replace(/\/api$/, '');
+      return `${baseDomain}${path}`;
+  };
   const getIcon = (titleText) => {
     const text = (titleText || '').toLowerCase();
     if (text.includes('qur\'an') || text.includes('tahfidz') || text.includes('hafalan')) {
@@ -34,7 +58,6 @@ export default function ProgramCard({ title, description, category }) {
         </svg>
       );
     }
-    // Default / Formal / Madrasah
     return (
       <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
@@ -43,20 +66,56 @@ export default function ProgramCard({ title, description, category }) {
     );
   };
 
+  const renderFocusPoints = (text) => {
+    if (!text) return null;
+    const lines = text
+      .split('\n')
+      .map(line => line.trim())
+      .filter(line => line.length > 0);
+
+    return (
+      <div className="mt-4 pt-4 border-t border-slate-100/80">
+        <div className="flex items-center gap-1.5 mb-2.5 text-brand-green-main font-sans font-bold text-[11px] uppercase tracking-wider">
+          <TargetIcon size={13} />
+          <span>Fokus & Unggulan Pembelajaran</span>
+        </div>
+        <ul className="space-y-2">
+          {lines.map((line, idx) => {
+            const cleanLine = line.replace(/^[•\-\*]\s*/, '');
+            return (
+              <li key={idx} className="flex items-start gap-2 text-xs text-slate-600 font-sans leading-relaxed">
+                <span className="text-emerald-600 mt-0.5 shrink-0">
+                  <CheckCircleIcon size={13} />
+                </span>
+                <span>{cleanLine}</span>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    );
+  };
+
   return (
-    <div className="group relative bg-white border border-slate-200/80 p-8 rounded-3xl shadow-md transition-all duration-500 hover:-translate-y-2 hover:shadow-premium hover:border-brand-green-main/30 overflow-hidden flex flex-col justify-between h-full min-h-[320px]">
+    <div className="group relative bg-white border border-slate-200/80 p-8 rounded-3xl shadow-md transition-all duration-500 hover:-translate-y-2 hover:shadow-premium hover:border-brand-green-main/30 overflow-hidden flex flex-col justify-between h-full min-h-[360px]">
       {/* Glow highlight effect */}
       <div className="absolute top-0 left-0 w-full h-[5px] bg-brand-gold-main scale-x-0 transition-transform duration-500 group-hover:scale-x-100 origin-left z-20" />
       
       {/* Soft color ambient blur on hover */}
       <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-brand-green-light/30 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700 pointer-events-none z-0" />
       
-      <div className="relative z-10 flex flex-col gap-6">
+      <div className="relative z-10 flex flex-col gap-5">
         <div className="flex items-center justify-between">
           {/* Icon Wrapper */}
-          <div className="p-3 bg-brand-green-light text-brand-green-main rounded-2xl shadow-sm transition-all duration-500 group-hover:bg-brand-green-main group-hover:text-white group-hover:rotate-6 group-hover:scale-105">
-            {getIcon(title)}
-          </div>
+          {icon_or_image ? (
+            <div className="w-14 h-14 rounded-2xl overflow-hidden bg-brand-green-light shadow-sm transition-all duration-500 group-hover:rotate-6 group-hover:scale-105">
+                <img src={getImageUrl(icon_or_image)} alt={title} className="w-full h-full object-cover" />
+            </div>
+          ) : (
+            <div className="p-3 bg-brand-green-light text-brand-green-main rounded-2xl shadow-sm transition-all duration-500 group-hover:bg-brand-green-main group-hover:text-white group-hover:rotate-6 group-hover:scale-105">
+              {getIcon(title)}
+            </div>
+          )}
           {category && (
             <span className="text-[10px] font-bold uppercase tracking-wider text-brand-gold-dark bg-brand-gold-light/65 border border-brand-gold-main/20 px-3 py-1 rounded-full flex items-center gap-1 shadow-sm">
               <StarIcon size={10} />
@@ -65,7 +124,7 @@ export default function ProgramCard({ title, description, category }) {
           )}
         </div>
         
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2.5">
           <h3 className="font-serif text-xl font-bold text-brand-green-dark tracking-tight transition-colors duration-300 relative pb-1 group-hover:text-brand-green-main w-fit">
             {title}
             {/* Title Underline Slide Effect */}
@@ -75,6 +134,8 @@ export default function ProgramCard({ title, description, category }) {
           <p className="font-sans text-xs sm:text-sm text-slate-500 leading-relaxed">
             {description}
           </p>
+
+          {renderFocusPoints(focus_and_excellence)}
         </div>
       </div>
 

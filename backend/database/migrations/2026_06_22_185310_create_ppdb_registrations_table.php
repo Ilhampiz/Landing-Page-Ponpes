@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('no_hp');
             $table->string('email')->nullable();
             $table->enum('jenjang', ['MI/SD', 'MTs/SMP', 'MA/SMA']);
+            $table->string('program_pilihan')->nullable();
             $table->string('dokumen_pendukung')->nullable();
             $table->enum('status', ['pending', 'diverifikasi', 'diterima', 'ditolak'])->default('pending');
             $table->timestamps();

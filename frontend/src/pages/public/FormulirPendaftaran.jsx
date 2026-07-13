@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import api from '../../api/axios';
 import { CheckCircle2, AlertCircle, Send, Sparkles, ArrowRight, ArrowLeft, User, Phone, GraduationCap } from 'lucide-react';
 
 export default function FormulirPendaftaran() {
     const [step, setStep] = useState(1);
+    const [programs, setPrograms] = useState([]);
     const [formData, setFormData] = useState({
         nama_calon_santri: '',
         nama_orang_tua: '',
@@ -12,8 +13,17 @@ export default function FormulirPendaftaran() {
         alamat: '',
         no_hp: '',
         email: '',
-        jenjang: ''
+        jenjang: '',
+        program_pilihan: ''
     });
+
+    useEffect(() => {
+        api.get('/programs')
+            .then(res => {
+                setPrograms(Array.isArray(res.data) ? res.data : (res.data?.data || []));
+            })
+            .catch(err => console.error('Gagal memuat program:', err));
+    }, []);
 
     const [loading, setLoading] = useState(false);
     const [successMsg, setSuccessMsg] = useState('');
@@ -44,7 +54,13 @@ export default function FormulirPendaftaran() {
         } else if (currentStep === 2) {
             if (!formData.nama_orang_tua.trim()) errors.nama_orang_tua = ['Nama orang tua/wali harus diisi'];
             if (!formData.no_hp.trim()) errors.no_hp = ['Nomor HP harus diisi'];
+            if (!formData.email.trim()) {
+                errors.email = ['Alamat email harus diisi'];
+            } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+                errors.email = ['Format email tidak valid'];
+            }
         } else if (currentStep === 3) {
+            if (!formData.program_pilihan) errors.program_pilihan = ['Pilih program pendidikan yang diinginkan'];
             if (!formData.jenjang) errors.jenjang = ['Pilih jenjang pendidikan terpilih'];
             if (!formData.alamat.trim()) errors.alamat = ['Alamat rumah lengkap harus diisi'];
         }
@@ -88,7 +104,8 @@ export default function FormulirPendaftaran() {
                     alamat: '',
                     no_hp: '',
                     email: '',
-                    jenjang: ''
+                    jenjang: '',
+                    program_pilihan: ''
                 });
                 setStep(1);
             }
@@ -139,7 +156,7 @@ export default function FormulirPendaftaran() {
             )}
 
             {/* Form Card */}
-            <div className="bg-white rounded-3xl border border-slate-100 p-6 sm:p-8 md:p-12 shadow-premium relative overflow-hidden max-w-3xl mx-auto">
+            <div className="bg-white rounded-3xl border border-slate-100 p-4 sm:p-8 md:p-12 shadow-premium relative overflow-hidden max-w-3xl mx-auto">
                 <div className="absolute top-0 left-0 right-0 h-[6px] bg-brand-green-main" />
                 
                 {/* Visual badge highlight */}
@@ -312,7 +329,7 @@ export default function FormulirPendaftaran() {
 
                                 <div className="flex flex-col gap-2">
                                     <label htmlFor="email" className="font-sans text-xs font-bold uppercase tracking-wider text-text-title">
-                                        Alamat Email <span className="text-slate-400 font-normal">(Opsional)</span>
+                                        Alamat Email <span className="text-rose-500 font-bold">*</span>
                                     </label>
                                     <input
                                         type="email"
@@ -340,7 +357,35 @@ export default function FormulirPendaftaran() {
                         <div className="space-y-5 animate-fadeIn">
                             <div className="flex items-center gap-2 mb-2 text-brand-green-main">
                                 <GraduationCap size={18} />
-                                <h3 className="font-serif text-lg font-bold text-text-title">Jenjang Studi & Domisili</h3>
+                                <h3 className="font-serif text-lg font-bold text-text-title">Program, Jenjang & Domisili</h3>
+                            </div>
+
+                            <div className="flex flex-col gap-2">
+                                <label htmlFor="program_pilihan" className="font-sans text-xs font-bold uppercase tracking-wider text-text-title">
+                                    Program Pendidikan Unggulan <span className="text-rose-500">*</span>
+                                </label>
+                                <select
+                                    id="program_pilihan"
+                                    name="program_pilihan"
+                                    required
+                                    value={formData.program_pilihan}
+                                    onChange={handleInputChange}
+                                    className={`w-full px-4 py-3.5 rounded-xl border outline-none text-sm text-text-title font-sans bg-white shadow-sm cursor-pointer transition-all duration-200 ${
+                                        fieldErrors.program_pilihan 
+                                            ? 'border-rose-300 focus:border-rose-500 focus:ring-1 focus:ring-rose-500' 
+                                            : 'border-slate-200 focus:border-brand-green-main focus:ring-1 focus:ring-brand-green-main'
+                                    }`}
+                                >
+                                    <option value="" disabled>-- Pilih Program Pendidikan --</option>
+                                    {programs.map((prog) => (
+                                        <option key={prog.id} value={prog.title}>
+                                            {prog.title}
+                                        </option>
+                                    ))}
+                                </select>
+                                {fieldErrors.program_pilihan && (
+                                    <span className="text-xs font-bold text-rose-500 mt-1">{fieldErrors.program_pilihan[0]}</span>
+                                )}
                             </div>
 
                             <div className="flex flex-col gap-2">

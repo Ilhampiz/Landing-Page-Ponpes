@@ -15,10 +15,11 @@ import {
     AlertCircle,
     ChevronDown,
     BookOpen,
-    Megaphone as RunningIcon,
     Target,
     MessageSquare,
     MapPin,
+    Users,
+    Trash2,
 } from 'lucide-react';
 import PageHeader from '../../components/admin/PageHeader';
 import LoadingState from '../../components/admin/LoadingState';
@@ -247,8 +248,18 @@ export default function Settings() {
         <Field label={label} badge={badge}>
             <div className="flex items-center gap-4">
                 {formData[fieldName] ? (
-                    <div className={`${previewClass} rounded-xl overflow-hidden border border-slate-200 shrink-0 bg-slate-50 flex items-center justify-center p-1`}>
+                    <div className={`${previewClass} rounded-xl overflow-hidden border border-slate-200 shrink-0 bg-slate-50 flex items-center justify-center p-1 relative group`}>
                         <img src={getImageUrl(formData[fieldName])} alt={label} className="max-w-full max-h-full object-contain" />
+                        <button
+                            type="button"
+                            onClick={() => setFormData(prev => ({ ...prev, [fieldName]: '' }))}
+                            className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                            title="Hapus gambar"
+                        >
+                            <div className="p-2 bg-rose-500 rounded-full text-white">
+                                <Trash2 size={14} />
+                            </div>
+                        </button>
                     </div>
                 ) : (
                     <div className={`${previewClass} rounded-xl border border-dashed border-slate-200 shrink-0 bg-slate-50 flex items-center justify-center text-slate-400`}>
@@ -266,9 +277,9 @@ export default function Settings() {
 
     return (
         <>
-            <PageHeader title="Pengaturan Beranda" />
+            <PageHeader title="Setting Tampilan Beranda" />
 
-            <main className="flex-grow p-6 md:p-8 overflow-y-auto max-w-4xl w-full mx-auto space-y-4">
+            <main className="flex-grow p-4 sm:p-6 md:p-8 overflow-y-auto max-w-4xl w-full mx-auto space-y-4">
 
                 {globalError && (
                     <div className="bg-rose-50 border border-rose-200 text-rose-800 p-4 rounded-xl text-xs font-semibold flex items-center gap-2">
@@ -300,7 +311,7 @@ export default function Settings() {
                         title="Navbar & Identitas Lembaga"
                         subtitle="Nama, logo, favicon, dan tagline yang tampil di navbar seluruh halaman"
                         saving={saving}
-                        onSave={() => saveSection(['nama_pesantren', 'tagline', 'deskripsi_singkat', 'logo', 'favicon'])}
+                        onSave={() => saveSection(['nama_pesantren', 'tagline', 'logo', 'favicon'])}
                     >
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <ImageUploadField label="Logo Website" badge="Navbar" fieldName="logo" previewClass="w-16 h-16" />
@@ -316,11 +327,6 @@ export default function Settings() {
                                 onChange={handleChange} className={inputCls}
                                 placeholder="Contoh: Mendidik Generasi Qur'ani & Unggul" />
                             <p className="text-[10px] text-slate-400">Tampil di bawah nama pesantren pada navbar, dan sebagai judul section Visi di beranda.</p>
-                        </Field>
-                        <Field label="Deskripsi Singkat" badge="Meta / Profil">
-                            <textarea name="deskripsi_singkat" rows="2" value={formData.deskripsi_singkat}
-                                onChange={handleChange} className={inputCls}
-                                placeholder="Deskripsi ringkas untuk keperluan SEO dan halaman profil..." />
                         </Field>
                     </SectionCard>
 
@@ -353,7 +359,7 @@ export default function Settings() {
                         accent="bg-blue-600"
                         saving={saving}
                         defaultOpen
-                        onSave={() => saveSection(['hero_title', 'hero_subtitle', 'hero_image', 'link_facebook', 'link_instagram', 'link_youtube'])}
+                        onSave={() => saveSection(['hero_title', 'hero_subtitle', 'hero_image'])}
                     >
                         <Field label="Judul Hero" badge="Hero">
                             <input type="text" name="hero_title" value={formData.hero_title}
@@ -366,105 +372,32 @@ export default function Settings() {
                                 placeholder="Contoh: Mendidik generasi penghafal Al-Qur'an yang cerdas dan berakhlak mulia..." />
                         </Field>
                         <ImageUploadField label="Gambar Latar Belakang Hero" badge="Hero" fieldName="hero_image" previewClass="w-28 h-18" />
-
-                        {/* Social media - also displayed as sidebar icons on hero */}
-                        <div className="pt-3 border-t border-slate-100">
-                            <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-3">
-                                Ikon Media Sosial <span className="font-normal normal-case text-slate-400">(tampil sebagai ikon sidebar di hero)</span>
-                            </p>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <Field label="Facebook URL" badge="Hero sidebar">
-                                    <input type="url" name="link_facebook" value={formData.link_facebook}
-                                        onChange={handleChange} className={inputCls}
-                                        placeholder="https://facebook.com/..." />
-                                </Field>
-                                <Field label="Instagram URL" badge="Hero sidebar">
-                                    <input type="url" name="link_instagram" value={formData.link_instagram}
-                                        onChange={handleChange} className={inputCls}
-                                        placeholder="https://instagram.com/..." />
-                                </Field>
-                                <Field label="YouTube URL" badge="Hero sidebar">
-                                    <input type="url" name="link_youtube" value={formData.link_youtube}
-                                        onChange={handleChange} className={inputCls}
-                                        placeholder="https://youtube.com/..." />
-                                </Field>
-                            </div>
-                        </div>
                     </SectionCard>
 
                     {/* ══════════════════════════════════════════════════════════
-                        3. SAMBUTAN PIMPINAN — Section 1 beranda
+                        3. SAMBUTAN PIMPINAN — Section Sambutan Beranda
                     ══════════════════════════════════════════════════════════ */}
                     <SectionCard
-                        icon={MessageSquare}
+                        icon={Users}
                         title="Sambutan Pimpinan"
-                        subtitle="Foto, nama, jabatan, dan kutipan sambutan yang tampil di section pertama setelah hero (Section 1)"
-                        accent="bg-amber-500"
+                        subtitle="Foto, nama, jabatan, dan teks sambutan yang tampil di Section Sambutan pada Beranda"
+                        accent="bg-rose-600"
                         saving={saving}
                         onSave={() => saveSection(['sambutan_pimpinan', 'sambutan_image', 'nama_pimpinan', 'jabatan_pimpinan'])}
                     >
-                        <ImageUploadField
-                            label="Foto Pimpinan"
-                            badge="Section 1 Beranda"
-                            fieldName="sambutan_image"
-                            previewClass="w-20 h-24"
-                        />
+                        <ImageUploadField label="Foto Pimpinan" badge="Beranda" fieldName="sambutan_image" previewClass="w-20 h-24" />
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            <Field label="Nama Pimpinan" badge="Section 1 Beranda">
-                                <input type="text" name="nama_pimpinan" value={formData.nama_pimpinan}
-                                    onChange={handleChange} className={inputCls}
-                                    placeholder="Contoh: KH. Ahmad Dahlan, Lc., M.A." />
+                            <Field label="Nama Pimpinan" badge="Beranda">
+                                <input type="text" name="nama_pimpinan" value={formData.nama_pimpinan} onChange={handleChange} className={inputCls} placeholder="Contoh: KH. Ahmad Dahlan, Lc., M.A." />
                             </Field>
-                            <Field label="Jabatan / Gelar" badge="Section 1 Beranda">
-                                <input type="text" name="jabatan_pimpinan" value={formData.jabatan_pimpinan}
-                                    onChange={handleChange} className={inputCls}
-                                    placeholder="Contoh: Pimpinan Pondok Pesantren" />
+                            <Field label="Jabatan / Gelar" badge="Beranda">
+                                <input type="text" name="jabatan_pimpinan" value={formData.jabatan_pimpinan} onChange={handleChange} className={inputCls} placeholder="Contoh: Pimpinan Pondok Pesantren" />
                             </Field>
                         </div>
-                        <Field label="Teks Sambutan" badge="Section 1 Beranda">
-                            <textarea name="sambutan_pimpinan" rows="5" value={formData.sambutan_pimpinan}
-                                onChange={handleChange} className={inputCls}
-                                placeholder="Assalamu'alaikum Warahmatullahi Wabarakatuh. Selamat datang di laman resmi..." />
-                            <p className="text-[10px] text-slate-400">Teks ini ditampilkan sebagai kutipan (dalam tanda petik) di card sambutan pimpinan.</p>
+                        <Field label="Teks Sambutan" badge="Beranda">
+                            <textarea name="sambutan_pimpinan" rows="5" value={formData.sambutan_pimpinan} onChange={handleChange} className={inputCls + " resize-y leading-relaxed"} placeholder="Assalamu'alaikum Warahmatullahi Wabarakatuh. Selamat datang di laman resmi Pondok Pesantren..." />
                         </Field>
                     </SectionCard>
-
-                    {/* ══════════════════════════════════════════════════════════
-                        4. VISI & PILAR — Section 2 beranda
-                    ══════════════════════════════════════════════════════════ */}
-                    <SectionCard
-                        icon={Target}
-                        title="Visi & Pilar Utama"
-                        subtitle="Judul tagline besar dan visi lembaga yang tampil di section Visi beranda (Section 2)"
-                        accent="bg-teal-600"
-                        saving={saving}
-                        onSave={() => saveSection(['tagline', 'visi', 'misi', 'sejarah_singkat'])}
-                    >
-                        <Field label="Tagline (Judul section Visi)" badge="Section 2 Beranda">
-                            <input type="text" name="tagline" value={formData.tagline}
-                                onChange={handleChange} className={inputCls}
-                                placeholder="Contoh: Mendidik Generasi Qur'ani & Unggul" />
-                            <p className="text-[10px] text-slate-400">Field ini sama dengan Tagline di Navbar — mengubah di sini juga akan mengubah tampilan navbar.</p>
-                        </Field>
-                        <Field label="Visi Lembaga" badge="Section 2 Beranda & Profil">
-                            <textarea name="visi" rows="3" value={formData.visi}
-                                onChange={handleChange} className={inputCls}
-                                placeholder="Terwujudnya lembaga pendidikan Islam unggulan yang mencetak hafizh/hafizhah mutqin..." />
-                        </Field>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            <Field label="Misi Lembaga" badge="Profil">
-                                <textarea name="misi" rows="4" value={formData.misi}
-                                    onChange={handleChange} className={inputCls}
-                                    placeholder="Tiap poin misi pisahkan dengan baris baru..." />
-                            </Field>
-                            <Field label="Sejarah Singkat" badge="Profil">
-                                <textarea name="sejarah_singkat" rows="4" value={formData.sejarah_singkat}
-                                    onChange={handleChange} className={inputCls}
-                                    placeholder="Ceritakan sejarah ringkas berdirinya pondok pesantren..." />
-                            </Field>
-                        </div>
-                    </SectionCard>
-
 
                     {/* ══════════════════════════════════════════════════════════
                         6. HUBUNGI KAMI — Section 7 beranda
@@ -472,10 +405,10 @@ export default function Settings() {
                     <SectionCard
                         icon={PhoneCall}
                         title="Hubungi Kami & Kontak"
-                        subtitle="Alamat dan WhatsApp Hotline yang tampil di section Hubungi Kami beranda (Section 7) dan halaman Kontak"
+                        subtitle="Alamat, kontak hotline, dan media sosial pesantren"
                         accent="bg-cyan-600"
                         saving={saving}
-                        onSave={() => saveSection(['alamat', 'no_telp', 'no_wa', 'email_kontak'])}
+                        onSave={() => saveSection(['alamat', 'no_telp', 'no_wa', 'email_kontak', 'link_facebook', 'link_instagram', 'link_youtube'])}
                     >
                         <Field label="Alamat Lengkap Pesantren" badge="Section 7 Beranda & Kontak">
                             <textarea name="alamat" rows="3" value={formData.alamat}
@@ -498,6 +431,30 @@ export default function Settings() {
                                     onChange={handleChange} className={inputCls}
                                     placeholder="info@pesantren.com" />
                             </Field>
+                        </div>
+
+                        {/* Social Media Links */}
+                        <div className="pt-4 border-t border-slate-100 mt-2">
+                            <p className="text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-3">
+                                Tautan Media Sosial Pesantren
+                            </p>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <Field label="Facebook URL" badge="Sosmed">
+                                    <input type="url" name="link_facebook" value={formData.link_facebook}
+                                        onChange={handleChange} className={inputCls}
+                                        placeholder="https://facebook.com/..." />
+                                </Field>
+                                <Field label="Instagram URL" badge="Sosmed">
+                                    <input type="url" name="link_instagram" value={formData.link_instagram}
+                                        onChange={handleChange} className={inputCls}
+                                        placeholder="https://instagram.com/..." />
+                                </Field>
+                                <Field label="YouTube URL" badge="Sosmed">
+                                    <input type="url" name="link_youtube" value={formData.link_youtube}
+                                        onChange={handleChange} className={inputCls}
+                                        placeholder="https://youtube.com/..." />
+                                </Field>
+                            </div>
                         </div>
                     </SectionCard>
 

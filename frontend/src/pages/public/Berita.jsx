@@ -8,6 +8,14 @@ export default function Berita() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
+    const getImageUrl = (path) => {
+        if (!path) return '';
+        if (path.startsWith('http')) return path;
+        const baseURL = api.defaults.baseURL || 'http://localhost:8000/api';
+        const baseDomain = baseURL.replace(/\/api$/, '');
+        return `${baseDomain}${path}`;
+    };
+
     useEffect(() => {
         const fetchNews = async () => {
             setLoading(true);
@@ -76,15 +84,16 @@ export default function Berita() {
             ) : (
                 <div className="flex flex-col gap-6 max-w-4xl mx-auto">
                     {news.map((item, idx) => (
-                        <article 
+                        <Link 
                             key={item.id || idx}
-                            className="group bg-white rounded-3xl border border-slate-200/85 p-5 md:p-6 shadow-md hover:shadow-premium hover:-translate-y-1.5 hover:border-brand-green-main/30 transition-all duration-350 flex flex-col md:flex-row gap-6 items-start cursor-pointer"
+                            to={`/berita/${item.slug}`}
+                            className="group bg-white rounded-3xl border border-slate-200/85 p-5 md:p-6 shadow-md hover:shadow-premium hover:-translate-y-1.5 hover:border-brand-green-main/30 transition-all duration-350 flex flex-col md:flex-row gap-6 items-start cursor-pointer no-underline text-inherit"
                         >
                             {/* Thumbnail */}
                             <div className="w-full md:w-56 h-48 md:h-36 rounded-2xl overflow-hidden shrink-0 bg-slate-50 border border-slate-100/50 shadow-inner">
                                 {item.thumbnail ? (
                                     <img 
-                                        src={item.thumbnail} 
+                                        src={getImageUrl(item.thumbnail)} 
                                         alt={item.title} 
                                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                         onError={(e) => {
@@ -115,15 +124,14 @@ export default function Berita() {
                                     {getExcerpt(item.content)}
                                 </p>
                                 
-                                <Link 
-                                    to={`/berita/${item.slug}`} 
-                                    className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-brand-green-main group-hover:text-brand-green-dark group-hover:gap-2 transition-all no-underline"
+                                <div 
+                                    className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-brand-green-main group-hover:text-brand-green-dark group-hover:gap-2 transition-all"
                                 >
                                     <span>Baca Selengkapnya</span>
                                     <ChevronRight size={14} />
-                                </Link>
+                                </div>
                             </div>
-                        </article>
+                        </Link>
                     ))}
                 </div>
             )}

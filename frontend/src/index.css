@@ -66,3 +66,108 @@ h1, h2, h3, h4, h5, h6 {
 .animate-marquee {
   animation: marquee 20s linear infinite;
 }
+
+/* News Content styling */
+.news-content {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--color-text-body);
+}
+.news-content p {
+  margin-bottom: 1.25rem;
+}
+.news-content h1, .news-content h2, .news-content h3, .news-content h4 {
+  font-family: var(--font-serif);
+  color: var(--color-text-title);
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+}
+.news-content h1 { font-size: 1.875rem; }
+.news-content h2 { font-size: 1.5rem; }
+.news-content h3 { font-size: 1.25rem; }
+.news-content ul, .news-content ol {
+  margin-bottom: 1.25rem;
+  padding-left: 1.5rem;
+}
+.news-content ul {
+  list-style-type: disc;
+}
+.news-content ol {
+  list-style-type: decimal;
+}
+.news-content li {
+  margin-bottom: 0.5rem;
+}
+.news-content strong {
+  color: var(--color-text-title);
+  font-weight: 600;
+}
+.news-content blockquote {
+  border-left: 4px solid var(--color-brand-green-main);
+  padding-left: 1rem;
+  font-style: italic;
+  color: var(--color-brand-green-dark);
+  background-color: var(--color-brand-green-light);
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.25rem;
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+.news-content img {
+  border-radius: 1rem;
+  margin: 1.5rem 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* Optimize animations for mobile / touch screens (prevent sticky hover and add tap active states) */
+@media (hover: none) {
+  /* Reset translations and scales */
+  .hover\:-translate-y-2:hover,
+  .hover\:-translate-y-1:hover,
+  .hover\:-translate-y-0\.5:hover,
+  .hover\:scale-105:hover,
+  .hover\:scale-110:hover,
+  .group:hover .group-hover\:scale-105,
+  .group:hover .group-hover\:scale-110,
+  .group:hover .group-hover\:scale-150,
+  .group:hover .group-hover\:rotate-6,
+  .group:hover .group-hover\:-translate-y-0\.5,
+  .group:hover .group-hover\:translate-x-0\.5,
+  .group-hover\/cta\:translate-x-0\.5:hover {
+    transform: none !important;
+    transition: none !important;
+  }
+  
+  /* Reset shadows and borders */
+  .hover\:shadow-premium:hover,
+  .hover\:shadow-md:hover,
+  .group:hover .group-hover\:shadow-md,
+  .group:hover .group-hover\:shadow-premium {
+    box-shadow: inherit !important;
+  }
+  
+  .hover\:border-brand-green-main\/30:hover {
+    border-color: inherit !important;
+  }
+
+  /* Reset line hover animations */
+  .group:hover .group-hover\:scale-x-100 {
+    transform: scaleX(0) !important;
+  }
+  .group:hover .group-hover\:w-full {
+    width: 0 !important;
+  }
+  
+  /* Add active tap feedback on links, buttons and cards */
+  a:active, 
+  button:active,
+  [role="button"]:active,
+  .group:active {
+    transform: scale(0.97) !important;
+    transition: transform 120ms cubic-bezier(0, 0, 0.2, 1) !important;
+    opacity: 0.92 !important;
+  }
+}
+

@@ -15,6 +15,7 @@ class PpdbRegistration extends Model
         'no_hp',
         'email',
         'jenjang',
+        'program_pilihan',
         'dokumen_pendukung',
         'status',
     ];

@@ -146,7 +146,7 @@ export default function Gallery() {
                 </button>
             </PageHeader>
 
-            <main className="flex-grow p-6 md:p-8 overflow-y-auto max-w-7xl w-full space-y-6">
+            <main className="flex-grow p-4 sm:p-6 md:p-8 overflow-y-auto max-w-7xl w-full space-y-6">
                     {success && (
                         <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-xl text-xs font-semibold">
                             {success}
@@ -349,12 +349,22 @@ export default function Gallery() {
                         <label className="text-xs font-bold text-slate-700">File Foto Galeri</label>
                         <div className="flex items-center gap-4">
                             {formData.image_path && (
-                                <div className="w-16 h-16 rounded-xl overflow-hidden border border-slate-150 shrink-0 bg-slate-50">
+                                <div className="w-16 h-16 rounded-xl overflow-hidden border border-slate-150 shrink-0 bg-slate-50 relative group">
                                     <img 
                                         src={getImageUrl(formData.image_path)} 
                                         alt="Preview" 
                                         className="w-full h-full object-cover" 
                                     />
+                                    <button
+                                        type="button"
+                                        onClick={() => setFormData(prev => ({ ...prev, image_path: '' }))}
+                                        className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                        title="Hapus gambar"
+                                    >
+                                        <div className="p-1.5 bg-rose-500 rounded-full text-white">
+                                            <Trash2 size={12} />
+                                        </div>
+                                    </button>
                                 </div>
                             )}
                             <div className="flex-grow">

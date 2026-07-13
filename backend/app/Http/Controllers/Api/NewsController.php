@@ -12,7 +12,8 @@ class NewsController extends Controller
     // Public
     public function index()
     {
-        $news = News::whereNotNull('published_at')
+        $news = News::with('author')
+            ->whereNotNull('published_at')
             ->orderBy('published_at', 'desc')
             ->get();
 
@@ -21,7 +22,7 @@ class NewsController extends Controller
 
     public function show($slug)
     {
-        $news = News::where('slug', $slug)->firstOrFail();
+        $news = News::with('author')->where('slug', $slug)->firstOrFail();
         return response()->json($news);
     }
 

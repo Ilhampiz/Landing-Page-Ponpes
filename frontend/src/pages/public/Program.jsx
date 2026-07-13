@@ -65,6 +65,7 @@ export default function Program() {
                             title={program.title}
                             description={program.description}
                             category={program.category || `Program #${program.order !== undefined ? program.order : idx + 1}`}
+                            icon_or_image={program.icon_or_image}
                         />
                     ))}
                 </div>

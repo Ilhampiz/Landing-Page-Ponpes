@@ -16,7 +16,10 @@ import {
     MapPin, 
     Calendar,
     CheckCircle2,
-    Quote
+    Quote,
+    Award,
+    Users,
+    Shield
 } from 'lucide-react';
 
 const QuranIcon = ({ size = 24 }) => (
@@ -41,30 +44,6 @@ const ShieldIcon = ({ size = 24 }) => (
     </svg>
 );
 
-const pillars = [
-    {
-        icon: QuranIcon,
-        title: "Tahfidzul Qur'an",
-        desc: "Program hafalan Al-Qur'an intensif dengan target hafalan mutqin serta pemahaman maknanya yang dibimbing oleh para ustadz/ustadzah hafidz.",
-        bg: 'bg-brand-green-light/40',
-        iconColor: 'text-brand-green-main',
-    },
-    {
-        icon: MosqueIcon,
-        title: "Tafaqquh Fiddin",
-        desc: "Pendalaman kajian keislaman melalui kitab-kitab klasik (kitab kuning) untuk melahirkan pemahaman agama yang mendalam dan moderat.",
-        bg: 'bg-brand-gold-light/40',
-        iconColor: 'text-brand-gold-main',
-    },
-    {
-        icon: ShieldIcon,
-        title: "Akhlakul Karimah",
-        desc: "Pembiasaan nilai adab Islami dan kemandirian dalam aktivitas harian pondok guna membentuk kepribadian yang luhur.",
-        bg: 'bg-brand-green-light/40',
-        iconColor: 'text-brand-green-main',
-    },
-];
-
 export default function Home() {
     const [programs, setPrograms] = useState([]);
     const [showFullSambutan, setShowFullSambutan] = useState(false);
@@ -79,7 +58,38 @@ export default function Home() {
         cta_utama_text: '',
         visi: '',
         sambutan_pimpinan: '',
+        nilai_1_title: '',
+        nilai_1_desc: '',
+        nilai_2_title: '',
+        nilai_2_desc: '',
+        nilai_3_title: '',
+        nilai_3_desc: '',
     };
+
+    const pillars = [
+        {
+            icon: Award,
+            title: settings.nilai_1_title || "Integritas (Amanah)",
+            desc: settings.nilai_1_desc || "Menjunjung tinggi kejujuran, keadilan, dan keselarasan ucapan dengan perbuatan dalam setiap aspek kehidupan.",
+            bg: 'bg-brand-green-light/40',
+            iconColor: 'text-brand-green-main',
+        },
+        {
+            icon: Users,
+            title: settings.nilai_2_title || "Ukhuwah (Kebersamaan)",
+            desc: settings.nilai_2_desc || "Membina persaudaraan yang erat di antara santri, asatidzah, orang tua, dan masyarakat luas dalam bingkai toleransi.",
+            bg: 'bg-brand-gold-light/40',
+            iconColor: 'text-brand-gold-main',
+        },
+        {
+            icon: Shield,
+            title: settings.nilai_3_title || "Disiplin & Mandiri",
+            desc: settings.nilai_3_desc || "Membiasakan hidup teratur, bertanggung jawab atas perbuatan pribadi, dan tangguh mengarungi tantangan harian.",
+            bg: 'bg-brand-green-light/40',
+            iconColor: 'text-brand-green-main',
+        },
+    ];
+
     const [loadingPrograms, setLoadingPrograms] = useState(true);
     const [loadingNews, setLoadingNews] = useState(true);
     const [loadingGallery, setLoadingGallery] = useState(true);
@@ -180,20 +190,19 @@ export default function Home() {
                     <div className="bg-slate-50 border border-slate-200/70 rounded-3xl p-6 md:p-10 shadow-md flex flex-col md:flex-row gap-8 md:gap-12 items-center md:items-stretch hover:shadow-premium transition-shadow duration-500">
 
                         {/* Image — slide from left */}
-                        <ScrollReveal direction="left" className="w-full md:w-72 shrink-0">
-                            <div className="rounded-2xl overflow-hidden shadow-md relative group min-h-[300px] h-full">
-                                <img
-                                    src={settings.sambutan_image
-                                        ? getImageUrl(settings.sambutan_image)
-                                        : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=500&h=600&fit=crop'
-                                    }
-                                    alt={settings.nama_pimpinan || 'Pimpinan Pesantren'}
-                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                                />
-                                {/* Golden shimmer on hover */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-brand-gold-main/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                            </div>
-                        </ScrollReveal>
+                        {settings.sambutan_image && (
+                            <ScrollReveal direction="left" className="w-full md:w-72 shrink-0">
+                                <div className="rounded-2xl overflow-hidden shadow-md relative group min-h-[300px] h-full bg-slate-100">
+                                    <img
+                                        src={getImageUrl(settings.sambutan_image)}
+                                        alt={settings.nama_pimpinan || 'Pimpinan Pesantren'}
+                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                                    />
+                                    {/* Golden shimmer on hover */}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-brand-gold-main/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                </div>
+                            </ScrollReveal>
+                        )}
 
                         {/* Content — slide from right */}
                         <ScrollReveal direction="right" delay={120} className="flex-1">
@@ -304,6 +313,7 @@ export default function Home() {
                                         title={item.title}
                                         description={item.description}
                                         category={item.category || "Unggulan"}
+                                        icon_or_image={item.icon_or_image}
                                     />
                                 </ScrollReveal>
                             ))}
@@ -350,7 +360,7 @@ export default function Home() {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                             {news.slice(0, 3).map((item, idx) => (
                                 <ScrollReveal key={item.id || idx} direction="up" delay={idx * 110}>
-                                    <div className="bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-sm hover:shadow-premium hover:-translate-y-1.5 transition-all duration-400 flex flex-col h-full group">
+                                    <Link to={`/berita/${item.slug}`} className="bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-sm hover:shadow-premium hover:-translate-y-1.5 transition-all duration-400 flex flex-col h-full group no-underline text-inherit">
                                         <div className="h-48 overflow-hidden bg-slate-50 border-b border-slate-100 relative">
                                             {item.thumbnail ? (
                                                 <img
@@ -383,15 +393,14 @@ export default function Home() {
                                                     {getExcerpt(item.content)}
                                                 </p>
                                             </div>
-                                            <Link
-                                                to="/berita"
-                                                className="font-sans text-xs font-bold text-brand-green-main hover:text-brand-green-dark inline-flex items-center gap-1 hover:gap-2 transition-all no-underline mt-2 group/link"
+                                            <div
+                                                className="font-sans text-xs font-bold text-brand-green-main group-hover:text-brand-green-dark inline-flex items-center gap-1 group-hover:gap-2 transition-all mt-2"
                                             >
                                                 <span>Baca Selengkapnya</span>
-                                                <ArrowRight size={12} className="transition-transform group-hover/link:translate-x-1" />
-                                            </Link>
+                                                <ArrowRight size={12} />
+                                            </div>
                                         </div>
-                                    </div>
+                                    </Link>
                                 </ScrollReveal>
                             ))}
                         </div>
@@ -528,7 +537,7 @@ export default function Home() {
                                 <div className="flex items-start gap-3.5 pl-2">
                                     <MapPin className="text-brand-green-main shrink-0 mt-0.5" size={18} />
                                     <div>
-                                        <span className="text-text-title font-sans font-bold text-xs block uppercase tracking-wider">Lokasi Kampus</span>
+                                        <span className="text-text-title font-sans font-bold text-xs block uppercase tracking-wider">Lokasi Pesantren</span>
                                         <span className="text-sm text-text-body mt-1 block leading-relaxed">{settings?.alamat}</span>
                                     </div>
                                 </div>

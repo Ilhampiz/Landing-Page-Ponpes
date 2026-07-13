@@ -4,7 +4,8 @@ import {
     Image as ImageIcon, 
     GraduationCap, 
     Users, 
-    Settings as SettingsIcon 
+    Settings as SettingsIcon,
+    UserCircle,
 } from 'lucide-react';
 
 export const adminMenuItems = [
@@ -13,5 +14,6 @@ export const adminMenuItems = [
     { name: 'Galeri', path: '/admin/gallery', icon: ImageIcon },
     { name: 'Program', path: '/admin/programs', icon: GraduationCap },
     { name: 'Pendaftaran', path: '/admin/pendaftaran', icon: Users },
-    {name: 'Profil & Tampilan', path: '/admin/settings', icon: SettingsIcon },
+    { name: 'Profil', path: '/admin/profil', icon: UserCircle },
+    { name: 'Setting', path: '/admin/settings', icon: SettingsIcon },
 ];
